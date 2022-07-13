@@ -1,0 +1,2 @@
+*.csv
+!final_structured_data.csv
