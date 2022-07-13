@@ -110,7 +110,6 @@ def extract_data(files_path):
     except Exception as e:
         print(e)
 
-<<<<<<< HEAD
 if args.mode == 'extract':
     final_data = extract_data(all_files_path)
 elif args.mode == 'from_csv':
@@ -166,8 +165,3 @@ print(most_crimes_per_district)
 
 least_crimes_per_district = crimetypes_per_district.groupby('districtName')[['crimeType', 'number_of_crimes']].min().sort_values(by=['number_of_crimes'],ascending = False)
 print(least_crimes_per_district)
-=======
-final_data = extract_data(all_files_path)
-# final_data = read_csv('final_structured_data.csv')
-# print(final_data)
->>>>>>> ef16f386ab1b8f40798f76f8652aa3458216b1b3

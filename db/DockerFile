@@ -1,0 +1,6 @@
+FROM timescale/timescaledb-postgis:latest-pg13
+
+ENV POSTGRES_PASSWORD=crimes
+ENV POSTGRES_USER=username
+ENV POSTGRES_DB=ukcrimes
+ADD ./db-init/ /docker-entrypoint-initdb.d/

@@ -1,0 +1,18 @@
+version: '3.4'
+services:
+    db:
+        build:
+            context: ./db
+            args:
+                - POSTGRES_DB=${POSTGRES_DB}
+                - POSTGRES_USER=${POSTGRES_USER}
+        ports:
+            - "${DB_PORT1}:${DB_PORT2}"
+        volumes:
+            - dbData:/var/lib/postgresql/data
+        restart: always
+        env_file: .env
+volumes:
+    dbData:
+        labels:
+            persistent: 'true'
