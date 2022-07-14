@@ -5,9 +5,9 @@ CREATE EXTENSION IF NOT EXISTS postgis;
 CREATE TABLE IF NOT EXISTS crimes(
     crimeID VARCHAR,
     districtName VARCHAR,
-    latitude GEOMETRY,
-    longitude GEOMETRY,
+    latitude VARCHAR,
+    longitude VARCHAR,
     crimeType VARCHAR,
-    lastOutcome VARCHAR
+    lastOutcome VARCHAR,
     PRIMARY KEY(crimeID)
 );

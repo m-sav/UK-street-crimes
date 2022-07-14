@@ -3,15 +3,24 @@ services:
     db:
         build:
             context: ./db
+            dockerfile: DockerFile
             args:
-                - POSTGRES_DB=${POSTGRES_DB}
-                - POSTGRES_USER=${POSTGRES_USER}
+                - POSTGRES_DB=ukcrimes
+                - POSTGRES_USER=postgres
+                - POSTGRES_PASSWORD=crimes
+                - DB_PORT1=5430
+                - DB_PORT2=5432
         ports:
-            - "${DB_PORT1}:${DB_PORT2}"
+            - "5430:5432"
         volumes:
             - dbData:/var/lib/postgresql/data
         restart: always
-        env_file: .env
+        environment:
+            - POSTGRES_DB=ukcrimes
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=crimes
+            - DB_PORT1=5430
+            - DB_PORT2=5432
 volumes:
     dbData:
         labels:

@@ -4,14 +4,30 @@ import numpy as np
 import argparse
 from pandas import read_csv,DataFrame,concat
 
+from db.db_execute import *
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-mode",default='from_csv',help="mode = 'from_csv' or 'extract'")
 parser.add_argument("-source",default='data/',help="provide a path to the data")
+parser.add_argument("-csv_file",default='final_structured_data.csv',help="provide a csv file with structured data")
 
 args = parser.parse_args()
 
 all_files_path = args.source
+
+def insert_data_to_postgres(data):
+    # optional: add new column 'location' combining lat and lon
+    # convert the spatial reference system of geo columns:'lat,lon' -> 'SRID=4326;point(LON LAT)' 
+    data['location'] = data.apply(lambda row: f"SRID=4326;point({str(row['longitude']) + ' ' + str(row['latitude'])})",axis=1)
+
+    #format the data to insert
+    data = data.values.tolist()
+    data = list(map(lambda v: '(' + ','.join(list(map(lambda s: "'" +str(s).replace("'","''")+"'" if ('NULL' not in str(s) and '{}' not in str(s)) else  str(s), v))) + ')', data))
+    data = ', '.join(data)
+
+    query = f'ALTER TABLE crimes ADD COLUMN  IF NOT EXISTS location GEOMETRY; INSERT INTO crimes(crimeID,districtName,latitude,longitude,crimeType,lastOutcome,location) VALUES {data} ON CONFLICT DO NOTHING'
+    
+    return execute_db_query(query)
 
 def extract_data(files_path):
     print('initiating extract_data()')
@@ -41,7 +57,6 @@ def extract_data(files_path):
 
                 # EXTRACT THE DESIRED FIELDS FROM EACH FILE
                 for file in group:
-                    # print(file)
                     file_type = file.split('-')[-1].replace('.csv','') # filetype is either 'outcomes' or 'street'
                     district = '-'.join(file.split('-')[2:-1])
 
@@ -105,6 +120,12 @@ def extract_data(files_path):
         result = result.filter(columns)
         # SAVE RESULT TO CSV
         result.to_csv('final_structured_data.csv',index=False)
+        # AND/OR SAVE RESULT TO POSTGRES
+        try:
+            insert_data_to_postgres(final_data) # inserts the result dataframe to table 'crimes' and generates a new column with the geo location of each crime
+        except Exception as e:
+            print(e)
+
         return result
 
     except Exception as e:
@@ -113,7 +134,8 @@ def extract_data(files_path):
 if args.mode == 'extract':
     final_data = extract_data(all_files_path)
 elif args.mode == 'from_csv':
-    final_data = read_csv('final_structured_data.csv')
+    final_data = read_csv(args.csv_file)
+
 
 # VISUALIZE THE DATA TO GAIN SOME INSIGHTS
 
