@@ -1,0 +1,4 @@
+FROM timescale/timescaledb-postgis:latest-pg13
+
+
+ADD ./db-init/ /docker-entrypoint-initdb.d/

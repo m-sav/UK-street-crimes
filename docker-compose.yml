@@ -1,0 +1,27 @@
+version: '3.4'
+services:
+    db:
+        build:
+            context: ./db
+            dockerfile: DockerFile
+            args:
+                - POSTGRES_DB=ukcrimes
+                - POSTGRES_USER=postgres
+                - POSTGRES_PASSWORD=crimes
+                - DB_PORT1=5430
+                - DB_PORT2=5432
+        ports:
+            - "5430:5432"
+        volumes:
+            - dbData:/var/lib/postgresql/data
+        restart: always
+        environment:
+            - POSTGRES_DB=ukcrimes
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=crimes
+            - DB_PORT1=5430
+            - DB_PORT2=5432
+volumes:
+    dbData:
+        labels:
+            persistent: 'true'
