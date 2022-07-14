@@ -44,7 +44,7 @@ python processing.py -mode extract -source data/
 select * from crimes;
 ```
 
-  2) Provide a structured dataset (_e.g. final_structured_dataset.csv_) and proceed directly to the analysis as described above.
+  2) Or, provide a structured dataset (_e.g. final_structured_dataset.csv_) and proceed directly to the analysis as described above.
 ```
 python processing.py -mode from_csv -csv_file final_structured_data.csv
 ```
